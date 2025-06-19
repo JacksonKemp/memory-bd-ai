@@ -11,10 +11,19 @@ export class GoogleSheetsService {
   private sheets: ReturnType<typeof google.sheets>;
 
   constructor() {
+    // Get the private key from environment variable
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    
+    // Clean and format the private key
+    const formattedKey = privateKey
+      ?.replace(/\\n/g, '\n')  // Replace literal \n with newlines
+      ?.replace(/["']/g, '')   // Remove any quotes
+      ?.trim();                // Remove any extra whitespace
+
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        private_key: formattedKey,
       },
       scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
     });
